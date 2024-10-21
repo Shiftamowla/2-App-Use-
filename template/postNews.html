@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classic Recipe Feed</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Libre Baskerville', serif; /* Classic serif font */
+            background-color: #f9f9f9; /* Light cream background */
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #ffffff; /* White background for the container */
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            font-family: 'Playfair Display', serif; /* Elegant font */
+            color: #5A2A1D; /* Dark brown for titles */
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Soft shadow effect */
+        }
+
+        .recipe-post {
+            border: 1px solid #ddd; /* Light gray border */
+            padding: 20px; /* Adjusted padding */
+            margin-bottom: 30px;
+            border-radius: 10px; /* More rounded corners */
+            background-color: #fefefe; /* Soft white background for posts */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s;
+            font-family: 'Libre Baskerville', serif; /* Classic serif font */
+            color: #333; /* Dark gray color */
+            max-width: 700px; /* Adjusted width for a medium size */
+            margin-left: auto; /* Center align */
+            margin-right: auto; /* Center align */
+        }
+
+        .recipe-post:hover {
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+        }
+
+        .recipe-title {
+            color: #A0522D; /* Sienna color for recipe titles */
+            font-size: 2em; /* Larger font size for titles */
+            margin: 0;
+            font-family: 'Playfair Display', serif; /* Elegant font for titles */
+            text-align: center;
+            border-bottom: 2px solid #ddd; /* Underline effect with thicker border */
+            padding-bottom: 10px;
+            background-color: #ffebcd; /* Light background color for titles */
+            padding: 10px; /* Padding around the title */
+            border-radius: 5px; /* Slightly round the corners */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+        }
+
+        .logo {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .logo img {
+            max-height: 300px; /* Adjust as needed */
+            max-width: 100%; /* Responsive image */
+            border-radius: 8px; /* Slightly round the image corners */
+        }
+
+        .details {
+            color: #555; /* Medium gray text */
+            margin: 8px 0;
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        /* Style for bold labels */
+        .label {
+            font-weight: bold; /* Make label bold */
+            color: #A0522D; /* Sienna color for contrast */
+            text-align: left; /* Align labels to the left */
+            margin-bottom: 5px; /* Space between label and text */
+            font-size: 1.1em; /* Slightly larger font size for labels */
+        }
+
+        .description {
+            margin-top: 10px;
+            color: #444; /* Darker gray text */
+            font-size: 1em;
+            text-align: center;
+        }
+
+        .ingredient-list {
+            padding-left: 20px; /* Indent the list */
+            margin: 10px 0;
+            text-align: left; /* Align text to the left for readability */
+            color: #333; /* Ensure text color is dark for visibility */
+            font-size: 1em; /* Adjust font size */
+            line-height: 1.6; /* Increase line height for readability */
+        }
+
+        .search-bar {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .search-bar input[type="text"] {
+            padding: 10px;
+            width: 70%;
+            border: 1px solid #ccc; /* Gray border */
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .search-bar button {
+            padding: 10px 15px;
+            background-color: #5A2A1D; /* Dark brown */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+            margin-left: 5px;
+        }
+
+        .search-bar button:hover {
+            background-color: #7B4A3A; /* Lighter brown on hover */
+        }
+
+        .apply-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 20px;
+            background-color: #5A2A1D; /* Dark brown for buttons */
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-size: 1em;
+            text-align: center;
+        }
+
+        .apply-button:hover {
+            background-color: #7B4A3A; /* Lighter brown on hover */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>News Posts</h2>
+
+        <div class="search-bar">
+            <form action="{% url 'search' %}" method="GET">
+                {% csrf_token %}
+                <input type="text" name="query" placeholder="Search for recipes..." required>
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
+        {% for i in data %}
+        <div class="recipe-post">
+            <h2 class="recipe-title">{{ i.Title }}</h2>
+            <div class="logo">
+                <img src="/{{ i.Image }}" alt="">
+            </div>
+            <div class="details"><span class="label">User:</span> <strong>{{ user.first_name }} {{ user.last_name }}</strong></div>
+            <div class="details"><span class="label">Content:</span> <strong>{{ i.Content }}</strong></div>
+            <div class="details"><span class="label">Author:</span> <strong>{{ i.Author }}</strong></div>
+            <div class="details"><span class="label">Categories:</span> <strong>{{ i.Categories }}</strong></div>
+            <div class="details"><span class="label">Date Published:</span> <strong>{{ i.Date }}</strong></div>
+            <a href="{% url 'viewnews' i.id %}" class="apply-button">View News</a>
+        </div>
+        {% endfor %}
+    </div> 
+
+</body>
+</html>
+
+{% endblock body %}
